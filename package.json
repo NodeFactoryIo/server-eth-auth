@@ -19,7 +19,7 @@
         "type": "git",
         "url": "git+https://github.com/NodeFactoryIo/server-eth-auth.git"
     },
-    "author": "Nodefactory",
+    "author": "Nodefactory <info@nodefactory.io>",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/NodeFactoryIo/server-eth-auth/issues"
@@ -42,7 +42,7 @@
         "mocha": "^6.1.4",
         "ts-loader": "^6.2.1",
         "ts-node": "^8.3.0",
-        "typescript": "^3.5.1"
+        "typescript": "3.8"
     },
     "dependencies": {}
 }
