@@ -2,6 +2,7 @@ export interface IChallengeStorage {
 
   /**
    * Store challenge hash for given address to storage.
+   * Overwrites last challenge if existing address sent.
    *
    * @param address ethereum address of user
    * @param challengeHash generated challenge hash

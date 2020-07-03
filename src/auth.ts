@@ -26,7 +26,7 @@ export class EthAuth {
    */
   public async createChallenge(address: string): Promise<IChallenge[]> {
     if(!isValidAddress(address)) {
-      throw new Error("Ethereum address send is not valid.");
+      throw new Error("Ethereum address sent is not valid.");
     }
 
     const challengeHash = crypto.createHmac(
@@ -55,10 +55,10 @@ export class EthAuth {
   /**
    * Checks if challenge is valid and returns ethereum address of authenticated user
    *
-   * @param challenge Challenge message sent by user
+   * @param challengeHash Challenge message sent by user
    * @param sig Message signature generated from web3 provider signing challenge message
    */
-  public async checkChallange(challenge: string, sig: string): Promise<string | undefined> {
+  public async checkChallange(challengeHash: string, sig: string): Promise<string | undefined> {
     const data = [{
       type: "string",
       name: "banner",
@@ -66,16 +66,18 @@ export class EthAuth {
     }, {
       type: "string",
       name: "challenge",
-      value: challenge
+      value: challengeHash
     }];
 
     const recoveredAddress = recoverTypedSignature({
       data,
       sig
     });
-    const storedChallenge = await this.challengeStorage.getChallenge(recoveredAddress.toLowerCase());
+    const storedChallenge = await this.challengeStorage.getChallenge(
+      recoveredAddress.toLowerCase()
+    );
 
-    if (storedChallenge === challenge) {
+    if (storedChallenge === challengeHash) {
       this.challengeStorage.deleteChallenge(recoveredAddress);
       return recoveredAddress;
     }
