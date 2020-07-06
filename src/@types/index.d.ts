@@ -34,4 +34,4 @@ export interface ITypedMessage {
   message: {
     value: string;
   };
-};
+}
