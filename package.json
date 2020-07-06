@@ -1,6 +1,6 @@
 {
     "name": "@nodefactory/server-eth-auth",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Validation of web3 signatures for server ethereum authentication",
     "keywords": [
         "web3",
@@ -10,7 +10,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "engines": {
-        "node": "12"
+        "node": ">=12"
     },
     "publishConfig": {
         "access": "public"
