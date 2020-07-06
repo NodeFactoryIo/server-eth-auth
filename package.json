@@ -1,5 +1,5 @@
 {
-    "name": "server-eth-auth",
+    "name": "@nodefactory/server-eth-auth",
     "version": "0.0.1",
     "description": "",
     "main": "dist/index.js",

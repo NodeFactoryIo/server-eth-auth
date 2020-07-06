@@ -1,22 +1,21 @@
-import {IChallengeStorage, IChallenge} from "./@types";
+import {IChallengeStorage, ITypedMessage} from "./@types";
 import crypto from "crypto";
 import {uuid} from "uuidv4";
 import {recoverTypedSignature} from "eth-sig-util";
 import {isValidAddress} from "ethereumjs-util";
 
 export class EthAuth {
+  private domain: string;
   private challengeStorage: IChallengeStorage;
-  private banner: string;
-  private secret: string;
+
 
   /**
    * @param challengeStorage implemented challenge storage object
-   * @param banner message to show in metamask when signing
+   * @param domain domain name shown in metamask
    */
-  public constructor(challengeStorage: IChallengeStorage, banner: string) {
+  public constructor(challengeStorage: IChallengeStorage, domain: string) {
     this.challengeStorage = challengeStorage;
-    this.banner = banner;
-    this.secret = uuid();
+    this.domain = domain;
   }
 
   /**
@@ -24,13 +23,13 @@ export class EthAuth {
    *
    * @param address ethereum address of user
    */
-  public async createChallenge(address: string): Promise<IChallenge[]> {
+  public async createChallenge(address: string): Promise<ITypedMessage> {
     if(!isValidAddress(address)) {
       throw new Error("Ethereum address sent is not valid.");
     }
 
     const challengeHash = crypto.createHmac(
-      "sha256", this.secret
+      "sha256", uuid()
     ).update(
       address + uuid()
     ).digest(
@@ -39,17 +38,10 @@ export class EthAuth {
 
     this.challengeStorage.storeChallenge(address.toLowerCase(), challengeHash);
 
-    const challenge  = [{
-      type: "string",
-      name: "banner",
-      value: this.banner
-    }, {
-      type: "string",
-      name: "challenge",
-      value: challengeHash
-    }];
 
-    return challenge;
+    const typedMessage = this.createTypedMessage(challengeHash);
+
+    return typedMessage;
   }
 
   /**
@@ -58,29 +50,47 @@ export class EthAuth {
    * @param challengeHash Challenge message sent by user
    * @param sig Message signature generated from web3 provider signing challenge message
    */
-  public async checkChallange(challengeHash: string, sig: string): Promise<string | undefined> {
-    const data = [{
-      type: "string",
-      name: "banner",
-      value: this.banner
-    }, {
-      type: "string",
-      name: "challenge",
-      value: challengeHash
-    }];
+  public async checkChallenge(challengeHash: string, sig: string): Promise<string | undefined> {
+    const typedMessage = this.createTypedMessage(challengeHash);
 
     const recoveredAddress = recoverTypedSignature({
-      data,
-      sig
+      data: typedMessage,
+      sig: sig,
     });
-    const storedChallenge = await this.challengeStorage.getChallenge(
+    const storedChallengeHash = await this.challengeStorage.getChallengeHash(
       recoveredAddress.toLowerCase()
     );
 
-    if (storedChallenge === challengeHash) {
+    if (storedChallengeHash === challengeHash) {
       this.challengeStorage.deleteChallenge(recoveredAddress);
       return recoveredAddress;
     }
+  }
+
+  private createTypedMessage(challengeHash: string): ITypedMessage {
+    return {
+      types: {
+        EIP712Domain: [
+          {
+            name: "name",
+            type: "string"
+          }
+        ],
+        Challenge: [
+          {
+            name: "value",
+            type: "string"
+          }
+        ]
+      },
+      domain: {
+        name: this.domain
+      },
+      primaryType: "Challenge",
+      message: {
+        value: challengeHash
+      }
+    };
   }
 
 }

@@ -28,8 +28,8 @@ describe("Create challenge", function () {
     }
   });
 
-  it("Stores challenge and returns challenge if valid address sent", async function () {
-    sinon.stub(Hmac.prototype, "digest").returns("hash");
+  it("Stores challenge and returns typed message with challenge hash if valid address sent", async function () {
+    sinon.stub(Hmac.prototype, "digest").returns("test hash");
     const storeChallengeSpy = sinon.spy(
       async () => {}
     );
@@ -39,18 +39,32 @@ describe("Create challenge", function () {
 
     expect(storeChallengeSpy.callCount).to.be.deep.equal(1);
     expect(storeChallengeSpy.args[0]).to.be.deep.equal([
-      "0x1690a20a0aff150c0501919604bf46a9c76a1cbc", "hash"
+      "0x1690a20a0aff150c0501919604bf46a9c76a1cbc", "test hash"
     ]);
-    expect(challenge).to.be.deep.equal([
+    expect(challenge).to.be.deep.equal(
       {
-        type: "string",
-        name: "banner",
-        value: "test banner"
-      }, {
-        type: "string",
-        name: "challenge",
-        value: "hash"
-      }]
+        types: {
+          EIP712Domain: [
+            {
+              name: "name",
+              type: "string"
+            }
+          ],
+          Challenge: [
+            {
+              name: "value",
+              type: "string"
+            }
+          ]
+        },
+        domain: {
+          name: "test banner"
+        },
+        primaryType: "Challenge",
+        message: {
+          value: "test hash"
+        }
+      }
     );
   });
 
@@ -72,12 +86,12 @@ describe("Check challenge", function () {
 
   it("Returns undefined if recovered challenge is not equal to stored challenge", async function () {
     sinon.stub(ethSigUtil, "recoverTypedSignature").returns("invalid address");
-    const getChallengeSpy = sinon.spy(
+    const getChallengeHashSpy = sinon.spy(
       async () => {return "invalid hash";}
     );
-    challengeStorage.getChallenge = getChallengeSpy;
+    challengeStorage.getChallengeHash = getChallengeHashSpy;
 
-    const address = await ethAuth.checkChallange(
+    const address = await ethAuth.checkChallenge(
       "574b110d87aba03af40df2109c9146c58f253e31e32255488bbcaf030775dbf6",
       "signature"
     );
@@ -91,11 +105,11 @@ describe("Check challenge", function () {
       async () => {return;}
     );
     challengeStorage.deleteChallenge = deleteChallengeSpy;
-    challengeStorage.getChallenge = async () => {
+    challengeStorage.getChallengeHash = async () => {
       return "574b110d87aba03af40df2109c9146c58f253e31e32255488bbcaf030775dbf6";
     };
 
-    const address = await ethAuth.checkChallange(
+    const address = await ethAuth.checkChallenge(
       "574b110d87aba03af40df2109c9146c58f253e31e32255488bbcaf030775dbf6",
       "signature"
     );

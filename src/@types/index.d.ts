@@ -9,11 +9,11 @@ export interface IChallengeStorage {
    */
   storeChallenge(address: string, challengeHash: string): Promise<void>;
   /**
-   * Retrieve stored challenge by address recovered from user reply.
+   * Retrieve stored challenge hash by address recovered from user reply.
    *
    * @param recoveredAddress ethereum address retrieved from user reply
    */
-  getChallenge(recoveredAddress: string): Promise<string | undefined>;
+  getChallengeHash(recoveredAddress: string): Promise<string | undefined>;
   /**
    * Delete stored challenge from storage.
    *
@@ -22,8 +22,16 @@ export interface IChallengeStorage {
   deleteChallenge(address: string): Promise<void>;
 }
 
-export type IChallenge = {
-  type: string;
-  name: string;
-  value: string;
-}
+export interface ITypedMessage {
+  types: {
+    EIP712Domain: {name: string; type: string}[];
+    Challenge: {name: string; type: string}[];
+  };
+  domain: {
+    name: string;
+  };
+  primaryType: "Challenge" | "EIP712Domain";
+  message: {
+    value: string;
+  };
+};
