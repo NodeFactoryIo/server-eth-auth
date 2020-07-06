@@ -12,6 +12,9 @@
     "engines": {
         "node": "12"
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "test": "mocha -r ts-node/register test/**/*.spec.ts ",
         "clean": "rm -rf lib",
