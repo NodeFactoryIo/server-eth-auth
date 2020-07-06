@@ -1,7 +1,8 @@
 # Server-eth-auth
 ![Build Status](https://img.shields.io/github/workflow/status/nodefactoryio/server-eth-auth/ci)
 ![GitHub](https://img.shields.io/github/license/NodeFactoryIo/server-eth-auth)
-![Node](https://img.shields.io/node/v/@nodefactoryio/server-eth-auth)
+![Node](https://img.shields.io/node/v/@nodefactory/server-eth-auth)
+![Npm](https://img.shields.io/npm/v/@nodefactory/server-eth-auth)
 
 This repository contains TypeScript implementation of validation for web3 signers
 signatures used for authenticating on server.
