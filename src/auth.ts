@@ -10,8 +10,8 @@ export class EthAuth {
 
 
   /**
-   * @param challengeStorage implemented challenge storage object
-   * @param domain domain name shown in metamask
+   * @param challengeStorage IChallengeStorage implemented storage object
+   * @param domain domain name shown in signer
    */
   public constructor(challengeStorage: IChallengeStorage, domain: string) {
     this.challengeStorage = challengeStorage;
@@ -38,9 +38,7 @@ export class EthAuth {
 
     this.challengeStorage.storeChallenge(address.toLowerCase(), challengeHash);
 
-
     const typedMessage = this.createTypedMessage(challengeHash);
-
     return typedMessage;
   }
 

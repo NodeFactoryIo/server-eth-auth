@@ -12,7 +12,7 @@ Example of usage:
 ```typescript
 import {EthAuth} from "@nodefactory/server-eth-auth";
 
-const domain = "Nodefactory" // shown in metamask when requesting signature
+const domain = "Nodefactory" // shown in signer when requesting signature
 const ethAuth = new EthAuth(storage: IChallengeStorage, domain)
 
 // Creating challenge for sending to user for signature
