@@ -1,6 +1,6 @@
 {
     "name": "@nodefactory/server-eth-auth",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Validation of web3 signatures for server ethereum authentication",
     "keywords": [
         "web3",
@@ -15,6 +15,10 @@
     "publishConfig": {
         "access": "public"
     },
+    "files": [
+        "dist",
+        "src"
+    ],
     "scripts": {
         "test": "mocha -r ts-node/register test/**/*.spec.ts ",
         "clean": "rm -rf lib",
