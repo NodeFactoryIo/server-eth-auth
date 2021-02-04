@@ -36,7 +36,7 @@ export class EthAuth {
       "hex"
     );
 
-    this.challengeStorage.storeChallenge(address.toLowerCase(), challengeHash);
+    await this.challengeStorage.storeChallenge(address.toLowerCase(), challengeHash);
 
     const typedMessage = this.createTypedMessage(challengeHash);
     return typedMessage;
